@@ -19,7 +19,7 @@ const serial = async (
             port: 3306,
             user: 'insertCoffeeFlow',
             password: 'coffeeflow10',
-            database: 'metricas'
+            database: 'coffeeflow'
         }
     ).promise();
 
@@ -39,11 +39,11 @@ const serial = async (
     });
     arduino.pipe(new serialport.ReadlineParser({ delimiter: '\r\n' })).on('data', async (data) => {
         const valores = data.split(',');
-        const dht11Umidade = parseFloat(valores[0]);
-        const dht11Temperatura = parseFloat(valores[1]);
-        const luminosidade = parseFloat(valores[3]);
-        const lm35Temperatura = parseFloat(valores[2]);
-        const chave = parseFloat(valores[4]);
+        const dht11Umidade = parseFloat(valores[0]) + Math.random();
+        const dht11Temperatura = parseFloat(valores[1]) + Math.random();
+        const lm35Temperatura = parseFloat(valores[2]) + Math.random();
+        const luminosidade = parseFloat(valores[3]) + Math.random();
+        const chave = parseFloat(valores[4]) + Math.random();
 
         valoresDht11Umidade.push(dht11Umidade);
         valoresDht11Temperatura.push(dht11Temperatura);
@@ -54,16 +54,16 @@ const serial = async (
         if (HABILITAR_OPERACAO_INSERIR) {
             //'INSERT INTO sensores (dht11_umidade, dht11_temperatura, luminosidade, lm35_temperatura, chave) VALUES (?, ?, ?, ?, ?)',
             
-            //https://www.w3schools.com/nodejs/nodejs_mysql_insert.asp - Modificação para vários insert's
 
+            for (var contador = 1; contador <= 8; contador++) {
             //DHT11 Umidade
             await poolBancoDados.execute(
-                'INSERT INTO dados (idSensor, valor) VALUES (1, ?)',
+                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 2, ?);`,
                 [dht11Umidade]
             );
             //DHT11 Temperatura
             await poolBancoDados.execute(
-                'INSERT INTO dados (idSensor, valor) VALUES (2, ?)',
+                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 1, ?);`,
                 [dht11Temperatura]
             );
             //LDR Luminosidade
@@ -73,7 +73,7 @@ const serial = async (
             // );
             //LM35 Temperatura
             await poolBancoDados.execute(
-                'INSERT INTO dados (idSensor, valor) VALUES (4, ?)',
+                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 3, ?);`,
                 [lm35Temperatura]
             );
             //Proximidade
@@ -81,6 +81,7 @@ const serial = async (
             //     'INSERT INTO dados (idSensor, valor) VALUES (5, ?)',
             //     [chave]
             // );
+            }
         }
 
     });
