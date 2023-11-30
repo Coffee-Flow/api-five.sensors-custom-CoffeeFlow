@@ -39,11 +39,14 @@ const serial = async (
     });
     arduino.pipe(new serialport.ReadlineParser({ delimiter: '\r\n' })).on('data', async (data) => {
         const valores = data.split(',');
-        const dht11Umidade = parseFloat(valores[0]) + Math.random();
-        const dht11Temperatura = parseFloat(valores[1]) + Math.random();
-        const lm35Temperatura = parseFloat(valores[2]) + Math.random();
-        const luminosidade = parseFloat(valores[3]) + Math.random();
-        const chave = parseFloat(valores[4]) + Math.random();
+        var dht11Umidade = parseFloat(valores[0]) + Math.random();
+        var dht11Temperatura = parseFloat(valores[1]) + Math.random();
+        var lm35Temperatura = parseFloat(valores[2]) + Math.random();
+        var luminosidade = parseFloat(valores[3]) + Math.random();
+        var chave = parseFloat(valores[4]) + Math.random();
+        var dht11_umidadefx = dht11Umidade;
+        var dht11Temperaturafx = dht11Temperatura;
+        var lm35_temperaturafx = lm35Temperatura;
 
         valoresDht11Umidade.push(dht11Umidade);
         valoresDht11Temperatura.push(dht11Temperatura);
@@ -53,34 +56,42 @@ const serial = async (
 
         if (HABILITAR_OPERACAO_INSERIR) {
             //'INSERT INTO sensores (dht11_umidade, dht11_temperatura, luminosidade, lm35_temperatura, chave) VALUES (?, ?, ?, ?, ?)',
-            
 
-            for (var contador = 1; contador <= 8; contador++) {
-            //DHT11 Umidade
-            await poolBancoDados.execute(
-                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 2, ?);`,
-                [dht11Umidade]
-            );
-            //DHT11 Temperatura
-            await poolBancoDados.execute(
-                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 1, ?);`,
-                [dht11Temperatura]
-            );
-            //LDR Luminosidade
-            // await poolBancoDados.execute(
-            //     'INSERT INTO dados (idSensor, valor) VALUES (3, ?)',
-            //     [luminosidade]
-            // );
-            //LM35 Temperatura
-            await poolBancoDados.execute(
-                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 3, ?);`,
-                [lm35Temperatura]
-            );
-            //Proximidade
-            // await poolBancoDados.execute(
-            //     'INSERT INTO dados (idSensor, valor) VALUES (5, ?)',
-            //     [chave]
-            // );
+
+            for (var contador = 1; contador < 9; contador++) {
+                //DHT11 Umidade
+                dht11Umidade = dht11_umidadefx;
+                dht11Temperatura = dht11Temperaturafx;
+                lm35Temperatura = lm35_temperaturafx;
+
+                dht11Umidade = + Number((Math.random()).toFixed(2));
+                dht11Temperatura = + Number((Math.random()).toFixed(2));
+                lm35Temperatura = + Number((Math.random()).toFixed(2));
+
+                await poolBancoDados.execute(
+                    `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 2, ?);`,
+                    [dht11Umidade]
+                );
+                //DHT11 Temperatura
+                await poolBancoDados.execute(
+                    `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 1, ?);`,
+                    [dht11Temperatura]
+                );
+                //LDR Luminosidade
+                // await poolBancoDados.execute(
+                //     'INSERT INTO dados (idSensor, valor) VALUES (3, ?)',
+                //     [luminosidade]
+                // );
+                //LM35 Temperatura
+                await poolBancoDados.execute(
+                    `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 3, ?);`,
+                    [lm35Temperatura]
+                );
+                //Proximidade
+                // await poolBancoDados.execute(
+                //     'INSERT INTO dados (idSensor, valor) VALUES (5, ?)',
+                //     [chave]
+                // );
             }
         }
 
