@@ -64,9 +64,9 @@ const serial = async (
                 dht11Temperatura = dht11Temperaturafx;
                 lm35Temperatura = lm35_temperaturafx;
 
-                dht11Umidade = + Number((Math.random()).toFixed(2));
-                dht11Temperatura = + Number((Math.random()).toFixed(2));
-                lm35Temperatura = + Number((Math.random()).toFixed(2));
+                dht11Umidade =+ Number((Math.random()).toFixed(2));
+                dht11Temperatura =+ Number((Math.random()).toFixed(2));
+                lm35Temperatura =+ Number((Math.random()).toFixed(2));
 
                 await poolBancoDados.execute(
                     `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 2, ?);`,
