@@ -51,37 +51,52 @@ const serial = async (
         valoresLm35Temperatura.push(lm35Temperatura);
         valoresChave.push(chave);
 
+        var idRegistro = 0;
+
         if (HABILITAR_OPERACAO_INSERIR) {
             //'INSERT INTO sensores (dht11_umidade, dht11_temperatura, luminosidade, lm35_temperatura, chave) VALUES (?, ?, ?, ?, ?)',
-            
+            // await poolBancoDados.execute(
+            //     `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 2, ?);`
+            // );
 
-            for (var contador = 1; contador <= 8; contador++) {
-            //DHT11 Umidade
+
             await poolBancoDados.execute(
-                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 2, ?);`,
+                `select max(idRegistro) as idRegistro from registro;`
+                ).then(function(resposta){
+                    idRegistro = resposta[0][0].idRegistro+1;
+                    console.log(idRegistro)
+                    if(isNaN(idRegistro)){
+                        idRegistro = 1; 
+                    }
+                
+            for (var contador = 1; contador <= 16; contador++) {
+            // DHT11 Umidade
+            poolBancoDados.execute(
+                `INSERT INTO registro (idRegistro, idLavoura, idQuadrante, idTipo, valor) VALUES (${idRegistro}, 1, ${contador}, 2, ?);`,
                 [dht11Umidade]
             );
-            //DHT11 Temperatura
-            await poolBancoDados.execute(
-                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 1, ?);`,
+            // //DHT11 Temperatura
+            poolBancoDados.execute(
+                `INSERT INTO registro (idRegistro, idLavoura, idQuadrante, idTipo, valor) VALUES (${idRegistro}, 1, ${contador}, 1, ?);`,
                 [dht11Temperatura]
             );
-            //LDR Luminosidade
-            // await poolBancoDados.execute(
-            //     'INSERT INTO dados (idSensor, valor) VALUES (3, ?)',
-            //     [luminosidade]
-            // );
-            //LM35 Temperatura
-            await poolBancoDados.execute(
-                `INSERT INTO registro (idLavoura, idQuadrante, idTipo, valor) VALUES (1, ${contador}, 3, ?);`,
+            // // //LDR Luminosidade
+            // // // await poolBancoDados.execute(
+            // // //     'INSERT INTO dados (idSensor, valor) VALUES (3, ?)',
+            // // //     [luminosidade]
+            // // // );
+            // // //LM35 Temperatura
+            poolBancoDados.execute(
+                `INSERT INTO registro (idRegistro, idLavoura, idQuadrante, idTipo, valor) VALUES (${idRegistro}, 1, ${contador}, 3, ?);`,
                 [lm35Temperatura]
             );
-            //Proximidade
+            // // //Proximidade
             // await poolBancoDados.execute(
             //     'INSERT INTO dados (idSensor, valor) VALUES (5, ?)',
             //     [chave]
             // );
             }
+        })
         }
 
     });
