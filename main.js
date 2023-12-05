@@ -39,11 +39,14 @@ const serial = async (
     });
     arduino.pipe(new serialport.ReadlineParser({ delimiter: '\r\n' })).on('data', async (data) => {
         const valores = data.split(',');
-        const dht11Umidade = parseFloat(valores[0]) + Math.random();
-        const dht11Temperatura = parseFloat(valores[1]) + Math.random();
-        const lm35Temperatura = parseFloat(valores[2]) + Math.random();
-        const luminosidade = parseFloat(valores[3]) + Math.random();
-        const chave = parseFloat(valores[4]) + Math.random();
+        var dht11Umidade = parseFloat(valores[0]) + Math.random();
+        var dht11Temperatura = parseFloat(valores[1]) + Math.random();
+        var lm35Temperatura = parseFloat(valores[2]) + Math.random();
+        var luminosidade = parseFloat(valores[3]) + Math.random();
+        var chave = parseFloat(valores[4]) + Math.random();
+        var dht11_umidadefx = dht11Umidade;
+        var dht11Temperaturafx = dht11Temperatura;
+        var lm35_temperaturafx = lm35Temperatura;
 
         valoresDht11Umidade.push(dht11Umidade);
         valoresDht11Temperatura.push(dht11Temperatura);
